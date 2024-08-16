@@ -23,7 +23,7 @@ mkdir -p "$BASE_BACKUP_PATH/${TYPESCRIPT}_${BCK}"
 mkdir -p "$RMAN_LOG_PATH"
 
 
- Run RMAN backup script
+#Run RMAN backup script
 rman target / LOG="$RMAN_LOG_PATH/backup_full_$DB_NAME_$BCK.log" <<EOF
 run
 {

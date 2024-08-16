@@ -1,23 +1,29 @@
 #!/bin/bash
 
-# Set the base backup path
-DB_NAME="infarepo"
+# INPUT the VARIABEL
+DB_NAME="zuber"
+TYPESCRIPT="archivelog"
 
-BASE_BACKUP_PATH="/backup/ARCHIVELOG/$DB_NAME"
+BASE_BACKUP_PATH="/home/oracle/skrip/$TYPESCRIPT/$DB_NAME"
 
 # Source the Oracle environment
-. /home/oracle/.profilerepo
+. /home/oracle/db19c.env
 
 # Get the current date
 BCK=$(date "+%Y%m%d")
 
-# Create the backup directory
-mkdir -p "$BASE_BACKUP_PATH/backup_archivelog_$BCK"
+#set old backup
+#BCK_OLD=$(date -d "$BCK -1 month" +"%Y%m%d")
 
 # Set the RMAN log path
-RMAN_LOG_PATH="/home/backup-data/rmanbackup/$DB_NAME/fullbackuplogs"
+RMAN_LOG_PATH="$BASE_BACKUP_PATH/archivebackup_log"
 
-# Run RMAN backup script
+# Create the backup directory
+mkdir -p "$BASE_BACKUP_PATH/${TYPESCRIPT}_${BCK}"
+mkdir -p "$RMAN_LOG_PATH"
+
+
+#Run RMAN backup script
 rman target / LOG="$RMAN_LOG_PATH/backup_full_$DB_NAME_$BCK.log" <<EOF
 run
 {
@@ -29,7 +35,8 @@ run
   allocate channel ch06 type disk maxpiecesize=1024M;
   allocate channel ch07 type disk maxpiecesize=1024M;
   allocate channel ch08 type disk maxpiecesize=1024M;
-  backup as compressed backupset archivelog all delete input format '$BASE_BACKUP_PATH/backup_archivelog_$BCK/df_archive_%T_d%d_p%p_u%u_c%c.bak';
+  delete noprompt backup;
+  backup as compressed backupset archivelog all delete input format '$BASE_BACKUP_PATH/${TYPESCRIPT}_${BCK}/df_archive_%T_d%d_p%p_u%u_c%c.bak';
   release channel ch01;
   release channel ch02;
   release channel ch03;
@@ -41,8 +48,12 @@ run
 }
 EOF
 
+#DELETE OLD BACKUP
+#============================================================================================
 # Copy the backup directory to the destination
-cp -r "$BASE_BACKUP_PATH/backup_archivelog_$BCK" "/home/backup-mdm/rmanbackup/$DB_NAME/archivedaily"
+#cp -r "$BASE_BACKUP_PATH/backup_full_$BCK" "/home/backup-data/rmanbackup/$DB_NAME/fullbackup"
 
-# Remove the backup directory after successful copy
-rm -r "$BASE_BACKUP_PATH/backup_archivelog_$BCK"
+# Remove the backup on temporary directory after successful copy
+#rm -r "$BASE_BACKUP_PATH/backup_full_$BCK"
+#remove old backup
+#rm -r "/home/backup-data/rmanbackup/$DB_NAME/fullbackup/backup_full_$BCK_OLD"
