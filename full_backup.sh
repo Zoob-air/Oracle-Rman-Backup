@@ -59,7 +59,3 @@ EOF
 #rm -r "$BASE_BACKUP_PATH/backup_full_$BCK"
 #remove old backup
 #rm -r "/home/backup-data/rmanbackup/$DB_NAME/fullbackup/backup_full_$BCK_OLD"
-
-
-
-bangsaaaaaaat
