@@ -18,7 +18,7 @@ mkdir -p $RMAN_LOG_PATH
 
 # Create PFILE from SPFILE using SQL*Plus
 sqlplus / as sysdba <<EOF
-CREATE PFILE="$RMAN_LOG_PATH/init_${DB_NAME}_${CDATE}.ora" FROM SPFILE;
+CREATE PFILE="$RMAN_LOG_PATH/pfile_${DB_NAME}_${CDATE}.ora" FROM SPFILE;
 EXIT;
 EOF
 
